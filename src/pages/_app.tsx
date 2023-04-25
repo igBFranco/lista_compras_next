@@ -1,12 +1,15 @@
 import Header from "@/components/Header";
 import "@/styles/globals.css";
-import type { AppProps } from "next/app";
+import { withRouter } from "next/router";
 
-export default function App({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps, router }: any) {
+  const isLoginPage = router.pathname === "/Login";
   return (
     <>
-      <Header />
+      {!isLoginPage && <Header />}
       <Component {...pageProps} />
     </>
   );
 }
+
+export default withRouter(MyApp);

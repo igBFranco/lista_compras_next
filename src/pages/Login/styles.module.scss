@@ -1,0 +1,65 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #fafafa;
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fff;
+    border: 1px solid #dbdbdb;
+    border-radius: 3px;
+    box-shadow: 0 0 1px #dbdbdb;
+    padding: 40px;
+
+    .logo {
+      font-family: "Billabong";
+      font-size: 50px;
+      margin-bottom: 30px;
+    }
+
+    input {
+      border: 1px solid #dbdbdb;
+      border-radius: 3px;
+      font-size: 14px;
+      padding: 10px;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    .loginButton {
+      background-color: #3897f0;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      font-size: 14px;
+      font-weight: bold;
+      padding: 10px;
+      width: 100%;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    .signupButton {
+      background-color: #fff;
+      color: #3897f0;
+      border: 1px solid #dbdbdb;
+      border-radius: 3px;
+      font-size: 14px;
+      font-weight: bold;
+      padding: 10px;
+      width: 100%;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .separator {
+      color: #8e8e8e;
+      font-size: 14px;
+      margin: 10px 0;
+    }
+  }
+}

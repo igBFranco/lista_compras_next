@@ -1,7 +1,7 @@
-// pages/users/index.tsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Link from "next/link";
+import styles from "./styles.module.scss";
 
 export default function Usuario() {
   const [users, setUsers] = useState([]);
@@ -20,9 +20,9 @@ export default function Usuario() {
   };
 
   return (
-    <div>
-      <h1>Usuários</h1>
-      <ul>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Usuários</h1>
+      <ul className={styles.lista}>
         {users.map((user: any) => (
           <li key={user.id}>
             {user.name} ({user.email})
@@ -31,7 +31,7 @@ export default function Usuario() {
       </ul>
       <Link legacyBehavior href="/CadastroUsuario">
         <a>
-          <button>Cadastrar Usuário</button>
+          <button className={styles.botao}>Cadastrar Usuário</button>
         </a>
       </Link>
     </div>

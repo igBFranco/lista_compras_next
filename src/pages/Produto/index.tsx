@@ -1,4 +1,3 @@
-// pages/products/index.tsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Link from "next/link";
@@ -16,7 +15,7 @@ export default function Produto() {
       const response = await axios.get("/api/products/read");
       setProducts(response.data);
     } catch (error) {
-      setProducts([{ id: "Erro", name: "Erro", price: "Erro" }] as any); // Adiciona um objeto "Erro" à lista de produtos
+      console.log(error);
     }
   };
 
@@ -29,7 +28,11 @@ export default function Produto() {
             <tr>
               <th>ID</th>
               <th>Nome</th>
+              <th>Marca</th>
               <th>Preço</th>
+              <th>Quantidade</th>
+              <th>Data de Validade</th>
+              <th>Descrição</th>
             </tr>
           </thead>
           <tbody>
@@ -37,7 +40,11 @@ export default function Produto() {
               <tr key={product.id}>
                 <td>{product.id}</td>
                 <td>{product.name}</td>
+                <td>{product.brand}</td>
                 <td>R$ {product.price}</td>
+                <td>{product.quantity}</td>
+                <td>{product.expiration_date}</td>
+                <td>{product.description}</td>
               </tr>
             ))}
           </tbody>
