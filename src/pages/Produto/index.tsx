@@ -12,7 +12,7 @@ export default function Produto() {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("/api/products/read");
+      const response = await axios.get("http://localhost:3001/products");
       setProducts(response.data);
     } catch (error) {
       console.log(error);
@@ -36,15 +36,15 @@ export default function Produto() {
             </tr>
           </thead>
           <tbody>
-            {products.map((product: any) => (
-              <tr key={product.id}>
-                <td>{product.id}</td>
-                <td>{product.name}</td>
-                <td>{product.brand}</td>
-                <td>R$ {product.price}</td>
-                <td>{product.quantity}</td>
-                <td>{product.expiration_date}</td>
-                <td>{product.description}</td>
+            {products.map((product) => (
+              <tr key={product.ID}>
+                <td>{product.ID}</td>
+                <td>{product.Nome}</td>
+                <td>{product.Marca}</td>
+                <td>R$ {product.Preco}</td>
+                <td>{product.Quantidade}</td>
+                <td>{product.Data_Validade}</td>
+                <td>{product.Descricao}</td>
               </tr>
             ))}
           </tbody>
