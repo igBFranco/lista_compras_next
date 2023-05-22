@@ -1,79 +1,148 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import styles from "./styles.module.scss";
 
-const LISTA_DE_COMPRAS_INICIAL: any = [];
+interface Item {
+  nome: string;
+  valorUnitario: number;
+}
+
+interface ListaDeCompras {
+  nomeDaLista: string;
+  itemSelecionado: string;
+  quantidade: number;
+  usuarioId: number;
+}
 
 export default function TelaCriarListaDeCompras() {
-  const [listaDeCompras, setListaDeCompras] = useState(
-    LISTA_DE_COMPRAS_INICIAL
-  );
-  const [itemSelecionado, setItemSelecionado] = useState("");
-  const [quantidade, setQuantidade] = useState(1);
+  const [listaDeCompras, setListaDeCompras] = useState<ListaDeCompras>({
+    nomeDaLista: "",
+    itemSelecionado: "",
+    quantidade: 1,
+    usuarioId: 0,
+  });
+  const [usuarios, setUsuarios] = useState<any[]>([]);
+  const [itensDisponiveisParaCompra, setItensDisponiveisParaCompra] = useState<
+    Item[]
+  >([]);
+  const [carrinho, setCarrinho] = useState<any[]>([]);
   const [valorTotalCarrinho, setValorTotalCarrinho] = useState(0);
 
-  const itensDisponiveisParaCompra: any = [
-    { nome: "Arroz", valorUnitario: 5.0 },
-    { nome: "Feijão", valorUnitario: 8.0 },
-    { nome: "Carne", valorUnitario: 25.0 },
-    { nome: "Leite", valorUnitario: 3.5 },
-    { nome: "Ovos", valorUnitario: 7.0 },
-    { nome: "Pão", valorUnitario: 2.0 },
-  ];
+  useEffect(() => {
+    fetchUsuarios();
+    fetchItensDisponiveisParaCompra();
+  }, []);
+
+  const fetchUsuarios = async () => {
+    try {
+      const response = await axios.get("http://localhost:3001/users");
+      setUsuarios(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchItensDisponiveisParaCompra = async () => {
+    try {
+      const response = await axios.get<Item[]>("http://localhost:3001/itens");
+      setItensDisponiveisParaCompra(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const adicionarItem = () => {
+    const itemExistente = carrinho.find(
+      (item) => item.nome === listaDeCompras.itemSelecionado
+    );
+    const itemSelecionado = itensDisponiveisParaCompra.find(
+      (item) => item.nome === listaDeCompras.itemSelecionado
+    );
+
+    if (itemExistente && itemSelecionado) {
+      itemExistente.quantidade += listaDeCompras.quantidade;
+      itemExistente.valorTotal =
+        itemExistente.quantidade * itemSelecionado.valorUnitario;
+      setCarrinho([...carrinho]);
+    } else if (itemSelecionado) {
+      const novoItem = {
+        nome: listaDeCompras.itemSelecionado,
+        quantidade: listaDeCompras.quantidade,
+        valorUnitario: itemSelecionado.valorUnitario,
+        valorTotal: listaDeCompras.quantidade * itemSelecionado.valorUnitario,
+      };
+      setCarrinho([...carrinho, novoItem]);
+    }
+  };
+
+  const handleSalvar = async () => {
+    try {
+      const response = await axios.post("http://localhost:3001/listas", {
+        nomeDaLista: listaDeCompras.nomeDaLista,
+        itemSelecionado: listaDeCompras.itemSelecionado,
+        quantidade: listaDeCompras.quantidade,
+        usuarioId: listaDeCompras.usuarioId,
+      });
+      console.log(response.data); // Faça o tratamento da resposta conforme necessário
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    const valorTotal = listaDeCompras.reduce(
+    const valorTotal = carrinho.reduce(
       (acumulador: any, item: any) => acumulador + item.valorTotal,
       0
     );
 
     setValorTotalCarrinho(valorTotal);
-  }, [listaDeCompras]);
-
-  function adicionarItem() {
-    const itemExistente = listaDeCompras.find(
-      (item: any) => item.nome === itemSelecionado
-    );
-    if (itemExistente) {
-      itemExistente.quantidade += quantidade;
-      itemExistente.valorTotal =
-        itemExistente.quantidade * itemExistente.valorUnitario;
-      setListaDeCompras([...listaDeCompras]);
-    } else {
-      const novoItem = {
-        nome: itemSelecionado,
-        quantidade,
-        valorUnitario: itemSelecionado
-          ? itensDisponiveisParaCompra.find(
-              (item: any) => item?.nome === itemSelecionado
-            ).valorUnitario
-          : 0,
-        valorTotal:
-          quantidade *
-          (itemSelecionado
-            ? itensDisponiveisParaCompra.find(
-                (item: any) => item?.nome === itemSelecionado
-              ).valorUnitario
-            : 0),
-      };
-      setListaDeCompras([...listaDeCompras, novoItem]);
-    }
-  }
+  }, [carrinho]);
 
   return (
     <div className={styles.container}>
       <h2 className={styles.titulo}>Criar Nova Lista de Compras</h2>
       <label htmlFor="nomeDaLista">Nome da Lista:</label>
-      <input type="text" id="nomeDaLista" />
+      <input
+        type="text"
+        id="nomeDaLista"
+        value={listaDeCompras.nomeDaLista}
+        onChange={(e) =>
+          setListaDeCompras({ ...listaDeCompras, nomeDaLista: e.target.value })
+        }
+      />
+      <label htmlFor="usuarioId">Usuário Dono da Lista:</label>
+      <select
+        id="usuarioId"
+        value={listaDeCompras.usuarioId}
+        onChange={(e) =>
+          setListaDeCompras({
+            ...listaDeCompras,
+            usuarioId: parseInt(e.target.value),
+          })
+        }
+      >
+        <option value={0}>Selecione um usuário</option>
+        {usuarios.map((usuario) => (
+          <option key={usuario.ID} value={usuario.ID}>
+            {usuario.name}
+          </option>
+        ))}
+      </select>
       <label htmlFor="itemSelecionado">Item:</label>
       <select
         id="itemSelecionado"
-        value={itemSelecionado}
-        onChange={(e) => setItemSelecionado(e.target.value)}
+        value={listaDeCompras.itemSelecionado}
+        onChange={(e) =>
+          setListaDeCompras({
+            ...listaDeCompras,
+            itemSelecionado: e.target.value,
+          })
+        }
       >
         <option value="">Selecione um item</option>
-        {itensDisponiveisParaCompra?.map((item: any, index: any) => (
-          <option key={index} value={item?.nome}>
-            {item?.nome}
+        {itensDisponiveisParaCompra.map((item, index) => (
+          <option key={index} value={item.nome}>
+            {item.nome}
           </option>
         ))}
       </select>
@@ -81,8 +150,13 @@ export default function TelaCriarListaDeCompras() {
       <input
         type="number"
         id="quantidade"
-        value={quantidade}
-        onChange={(e) => setQuantidade(parseInt(e.target.value))}
+        value={listaDeCompras.quantidade}
+        onChange={(e) =>
+          setListaDeCompras({
+            ...listaDeCompras,
+            quantidade: parseInt(e.target.value),
+          })
+        }
       />
       <button onClick={adicionarItem}>Adicionar</button>
       <table className={styles.tabela}>
@@ -95,7 +169,7 @@ export default function TelaCriarListaDeCompras() {
           </tr>
         </thead>
         <tbody>
-          {listaDeCompras.map((item: any, index: number) => (
+          {carrinho.map((item, index) => (
             <tr key={index}>
               <td>{item.nome}</td>
               <td>{item.quantidade}</td>
@@ -105,11 +179,12 @@ export default function TelaCriarListaDeCompras() {
           ))}
         </tbody>
       </table>
-
       <p className={styles.valor}>
         Valor Total do Carrinho: R${valorTotalCarrinho.toFixed(2)}
       </p>
-      <button className={styles.btn}>Salvar</button>
+      <button className={styles.btn} onClick={handleSalvar}>
+        Salvar
+      </button>
     </div>
   );
 }

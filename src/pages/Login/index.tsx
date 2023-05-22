@@ -1,15 +1,33 @@
 import React, { useState } from "react";
 import styles from "./styles.module.scss";
 import Link from "next/link";
+import axios from "axios";
+import { useRouter } from "next/router";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
-  const handleLogin = (event: any) => {
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(`Username: ${username}, Password: ${password}`);
-    // Adicione aqui a lógica de autenticação
+
+    try {
+      const response = await axios.post("http://localhost:3001/users/login", {
+        username,
+        password,
+      });
+
+      if (response.data.success) {
+        alert("Login bem-sucedido!");
+        // Realizar as ações de autenticação necessárias, como armazenar o token ou dados do usuário na aplicação
+        router.push("/"); // Redirecionar para a página de dashboard ou outra página desejada após o login
+      } else {
+        alert("Nome de usuário ou senha incorretos!");
+      }
+    } catch (error) {
+      alert("Erro ao fazer login!");
+    }
   };
 
   return (
@@ -28,14 +46,9 @@ function Login() {
           value={password}
           onChange={(event) => setPassword(event.target.value)}
         />
-        <Link className={styles.loginButton} href="/">
-          <button type="submit" className={styles.loginButton}>
-            Entrar
-          </button>
-        </Link>
-
-        <div className={styles.separator}>OU</div>
-        <button className={styles.signupButton}>Cadastre-se</button>
+        <button type="submit" className={styles.loginButton}>
+          Entrar
+        </button>
       </form>
     </div>
   );

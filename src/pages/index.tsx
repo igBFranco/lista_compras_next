@@ -1,11 +1,59 @@
+import { ReactNode, useEffect, useState } from "react";
 import Head from "next/head";
-import Image from "next/image";
-import { Inter } from "next/font/google";
-import styles from "@/styles/Home.module.scss";
 import Link from "next/link";
-const inter = Inter({ subsets: ["latin"] });
+import axios from "axios";
+import styles from "@/styles/Home.module.scss";
+
+interface Cart {
+  Itens: ReactNode;
+  ID: number;
+  Valor_Total: number;
+  Usuario_id: number;
+  DataCriacao: string;
+  DataAlteracao: string;
+  Status: string;
+}
+
+interface User {
+  ID: number;
+  name: string;
+  email: string;
+  username: string;
+  password: string;
+}
 
 export default function Home() {
+  const [carts, setCarts] = useState<Cart[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    fetchCarts();
+    fetchUsers();
+  }, []);
+
+  const fetchCarts = async () => {
+    try {
+      const response = await axios.get<Cart[]>("http://localhost:3001/cart");
+      setCarts(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get<User[]>("http://localhost:3001/users");
+      setUsers(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getUserName = (userId: number) => {
+    const user = users.find((user) => user.ID === userId);
+    return user ? user.name : "";
+  };
+
   return (
     <>
       <Head>
@@ -29,24 +77,16 @@ export default function Home() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1</td>
-                <td>João</td>
-                <td>Batata, aipim, faca, papel higienico...</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Maria</td>
-                <td>Espinafre, frango, Diabo Verde, carne moída...</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>Lucas</td>
-                <td>Saco de lixo, caneta, pão, pasta de dente...</td>
-              </tr>
+              {carts.map((cart) => (
+                <tr key={cart.ID}>
+                  <td>{cart.ID}</td>
+                  <td>{getUserName(cart.Usuario_id)}</td>
+                  <td>{cart.Itens}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
-          <Link legacyBehavior href="/NovaLista">
+          <Link href="/NovaLista" passHref>
             <a>
               <button className={styles.newListButton}>Nova Lista</button>
             </a>

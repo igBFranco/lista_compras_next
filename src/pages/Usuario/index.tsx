@@ -3,8 +3,14 @@ import axios from "axios";
 import Link from "next/link";
 import styles from "./styles.module.scss";
 
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
 export default function Usuario() {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
     fetchUsers();
@@ -12,7 +18,7 @@ export default function Usuario() {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get("/api/users/read");
+      const response = await axios.get<User[]>("http://localhost:3001/users/");
       setUsers(response.data);
     } catch (error) {
       alert("Erro ao buscar usuários!");
@@ -23,13 +29,13 @@ export default function Usuario() {
     <div className={styles.container}>
       <h1 className={styles.title}>Usuários</h1>
       <ul className={styles.lista}>
-        {users.map((user: any) => (
+        {users.map((user) => (
           <li key={user.id}>
             {user.name} ({user.email})
           </li>
         ))}
       </ul>
-      <Link legacyBehavior href="/CadastroUsuario">
+      <Link href="/CadastroUsuario">
         <a>
           <button className={styles.botao}>Cadastrar Usuário</button>
         </a>

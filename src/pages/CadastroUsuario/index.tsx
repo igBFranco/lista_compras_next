@@ -3,38 +3,38 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import styles from "./styles.module.scss";
 
-export default function CadastroUsuario() {
+export default function CadastroProduto() {
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [brand, setBrand] = useState("");
+  const [price, setPrice] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [expirationDate, setExpirationDate] = useState("");
+  const [description, setDescription] = useState("");
   const router = useRouter();
 
-  const handleSubmit = async (event: any) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     try {
-      await axios.post("/api/users/create", {
+      await axios.post("/api/products/create", {
         name,
-        email,
-        username,
-        password,
+        brand,
+        price,
+        quantity,
+        expiration_date: expirationDate,
+        description,
+        user_id: 1, // Você deve substituir este valor pelo ID do usuário logado
       });
-      alert("Usuário cadastrado com sucesso!");
-      router.push("/users");
+      alert("Produto cadastrado com sucesso!");
+      router.push("/products");
     } catch (error) {
-      alert("Erro ao cadastrar usuário!");
+      alert("Erro ao cadastrar produto!");
     }
-  };
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
   };
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.titulo}>Cadastro de Usuário</h1>
+      <h1 className={styles.title}>Cadastro de Produto</h1>
       <form onSubmit={handleSubmit}>
         <label>
           Nome:
@@ -47,44 +47,54 @@ export default function CadastroUsuario() {
         </label>
         <br />
         <label>
-          Email:
+          Marca:
           <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            value={brand}
+            onChange={(e) => setBrand(e.target.value)}
             required
           />
         </label>
         <br />
         <label>
-          Usuário:
+          Preço:
           <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            type="number"
+            step="0.01"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
             required
           />
         </label>
         <br />
-        <div className={styles.divsenha}>
-          <label>
-            Senha:
-            <input
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <button
-              type="button"
-              onClick={togglePasswordVisibility}
-              className={styles.showPasswordButton}
-            >
-              {showPassword ? "Esconder" : "Mostrar"}
-            </button>
-          </label>
-        </div>
-
+        <label>
+          Quantidade:
+          <input
+            type="number"
+            value={quantity}
+            onChange={(e) => setQuantity(e.target.value)}
+            required
+          />
+        </label>
+        <br />
+        <label>
+          Data de Validade:
+          <input
+            type="date"
+            value={expirationDate}
+            onChange={(e) => setExpirationDate(e.target.value)}
+            required
+          />
+        </label>
+        <br />
+        <label>
+          Descrição:
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
+        </label>
         <br />
         <button className={styles.botao} type="submit">
           Cadastrar
