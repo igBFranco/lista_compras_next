@@ -44,7 +44,9 @@ export default function TelaCriarListaDeCompras() {
 
   const fetchItensDisponiveisParaCompra = async () => {
     try {
-      const response = await axios.get<Item[]>("http://localhost:3001/itens");
+      const response = await axios.get<Item[]>(
+        "http://localhost:3001/products"
+      );
       setItensDisponiveisParaCompra(response.data);
     } catch (error) {
       console.log(error);
@@ -77,7 +79,7 @@ export default function TelaCriarListaDeCompras() {
 
   const handleSalvar = async () => {
     try {
-      const response = await axios.post("http://localhost:3001/listas", {
+      const response = await axios.post("http://localhost:3001/cart/", {
         nomeDaLista: listaDeCompras.nomeDaLista,
         itemSelecionado: listaDeCompras.itemSelecionado,
         quantidade: listaDeCompras.quantidade,
