@@ -86,7 +86,7 @@ export default function Home() {
               ))}
             </tbody>
           </table>
-          <Link href="/NovaLista" passHref>
+          <Link legacyBehavior href="/NovaLista" passHref>
             <a>
               <button className={styles.newListButton}>Nova Lista</button>
             </a>

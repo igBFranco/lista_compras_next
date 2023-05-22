@@ -35,7 +35,7 @@ export default function Usuario() {
           </li>
         ))}
       </ul>
-      <Link href="/CadastroUsuario">
+      <Link legacyBehavior href="/CadastroUsuario">
         <a>
           <button className={styles.botao}>Cadastrar Usuário</button>
         </a>
