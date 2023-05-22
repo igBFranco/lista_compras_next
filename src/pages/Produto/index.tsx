@@ -3,8 +3,18 @@ import axios from "axios";
 import Link from "next/link";
 import styles from "./styles.module.scss";
 
+interface Product {
+  ID: number;
+  Nome: string;
+  Marca: string;
+  Preco: number;
+  Quantidade: number;
+  Data_Validade: string;
+  Descricao: string;
+}
+
 export default function Produto() {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     fetchProducts();
@@ -12,7 +22,9 @@ export default function Produto() {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/products");
+      const response = await axios.get<Product[]>(
+        "http://localhost:3001/products"
+      );
       setProducts(response.data);
     } catch (error) {
       console.log(error);
@@ -22,7 +34,7 @@ export default function Produto() {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Produtos</h1>
-      {products.length > 0 ? ( // Verifica se há produtos para exibir
+      {products.length > 0 ? (
         <table className={styles.table}>
           <thead>
             <tr>
